@@ -1172,8 +1172,13 @@ body.embed .detailed-status,
 .layout-single-column .status .status__content,
 .layout-single-column .notification.notification-admin-sign-up .display-name__account {
   font-size: var(--font-size);
-  padding-left: 2px;
+  padding-left: calc(var(--size-avatar) + var(--gap-default));
   padding-top: 0;
+}
+
+.layout-single-column .status--in-thread .status__content,
+.layout-single-column .status--in-thread .status__action-bar {
+  padding-left: 2px;
 }
 
 /* Translate link and other padding resets */
