@@ -14,22 +14,23 @@ Read the blog post: [The day I decided to build my own "Twitter"](https://rolle.
 1. [Why would anyone want Mastodon to look like Twitter?](#why-would-anyone-want-mastodon-to-look-like-twitter)
 2. [Features](#features)
 3. [Installation for Mastodon instance admins](#installation-for-mastodon-instance-admins)
-4. [Installation for regular users, contributing and testing](#installation-for-regular-users-contributing-and-testing)
-5. [Other tweaks and customizations](#other-tweaks-and-customizations)
+4. [Make Mastodon Bird UI as optional by integrating it as 'Site theme' in settings for all users](#make-mastodon-bird-ui-as-optional-by-integrating-it-as-site-theme-in-settings-for-all-users)
+5. [Installation for regular users, contributing and testing](#installation-for-regular-users-contributing-and-testing)
+6. [Other tweaks and customizations](#other-tweaks-and-customizations)
     1. [Twitter-like link previews](#twitter-like-link-previews)
     2. [Status bar color on Android PWA](#status-bar-color-on-android-pwa)
     3. [Hide translate link for multiple languages](#hide-translate-link-for-multiple-languages)
     4. [Thread lines](#thread-lines)
     5. [Micro-interactions](#micro-interactions)
-6. [FAQ](#faq)
+7. [FAQ](#faq)
     1. [I want to make changes to the UI, can I do that?](#i-want-to-make-changes-to-the-ui-can-i-do-that)
     2. [Can you implement feature X?](#can-you-implement-feature-x)
     3. [I want background-color to the compose form](#i-want-background-color-to-the-compose-form)
     4. [Why don't you just create an app?](#why-dont-you-just-create-an-app)
     5. [Why don't you just run Mastodon Bird UI in a separate URL?](#why-dont-you-just-run-mastodon-bird-ui-in-a-separate-url)
-    6. [Why the advanced web interface is not styled?](#why-the-advanced-web-interface-is-not-styled)
+    6. [Is the advanced web interface styled](#is-the-advanced-web-interface-styled)
     7. [Why the admin interface is not styled?](#why-the-admin-interface-is-not-styled)
-7. [Goals](#goals)
+8. [Goals](#goals)
 
 ## Why would anyone want Mastodon to look like Twitter?
 
@@ -55,13 +56,14 @@ Here are some of the UI things Mastodon Bird UI is trying to solve (read [the Ma
 - [Dark profile on macOS desktop](https://user-images.githubusercontent.com/1534150/234549643-3551cb2c-34c8-43bd-be27-3a9932f6be1d.png)
 - [Light version on macOS desktop](https://user-images.githubusercontent.com/1534150/234549763-dc1f5216-a4bb-4577-b27e-7d84d1b6a82d.png)
 - [Twitter colors on desktop (outdated)](https://user-images.githubusercontent.com/1534150/223725571-b7f8ef41-212c-476c-9006-4e7cb2ddc062.png)
+- [Advanced web interface with multiple columns](https://github-production-user-asset-6210df.s3.amazonaws.com/1534150/238149036-aba154be-dd2c-43b0-9e41-aaea54908eb8.png)
 
 ## Features
 
 As this is CSS-only, they are not really "features" but more like aesthetic changes.
 
 - Respects the profile **Site theme** setting and sets dark/light based on this alone
-- Missing alt text indicators (faded with "Alt text missing" text in the center)
+- Missing alt text indicators
 - Subtle deep purple ribbon in the right corner for private messages
 - CSS variables for everything
 - Threaded replies (limited, see issue [#4](https://github.com/ronilaukkarinen/mastodon-bird-ui/issues/4#issuecomment-1493274306))
@@ -78,16 +80,58 @@ As this is CSS-only, they are not really "features" but more like aesthetic chan
 
 ## Installation for Mastodon instance admins
 
-1. Copy the contents of [style.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/style.css)
-2. Install it as CSS to your assets (add it to your build process to [app/javascript/styles](https://github.com/mastodon/mastodon/tree/main/app/javascript/styles) and rebuild assets) or (preferred) use **Custom CSS** in the Appearance settings in your instance (https://_yourinstance_/admin/settings/appearance):
+1. Copy the contents of [layout-single-column.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/layout-single-column.css) and [layout-multiple-columns.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/layout-multiple-columns.css) and paste them (or one of them) to the **Custom CSS** in the Appearance settings in your instance (https://_yourinstance_/admin/settings/appearance). It might be recommended using the single layout CSS as "base" and use the advanced view CSS with browser extension (as it's desktop only anyway).
 
 ![Screen-Shot-2023-03-31-13-25-52](https://user-images.githubusercontent.com/1534150/229111630-c8975708-134b-4887-b259-a87857193387.png)
+
+## Make Mastodon Bird UI as optional by integrating it as 'Site theme' in settings for all users
+
+Mastodon Bird UI can be integrated as a **Site theme** for all instance users using [Bird UI Theme Admins](https://github.com/mstdn/Bird-UI-Theme-Admins) written by [STUX](https://mstdn.social/@stux).
+
+1. Add the files from the repo (elephant.scss) and the folder elephant to your Mastodon themes directory:
+
+```
+app/
+  javascript/
+    styles/
+    elephant.scss                             | **new**
+      contrast/
+        ...
+      fonts/
+        ...
+      elephant/                                   | **new**
+        layout-multiple-columns.scss                               | **new**
+        layout-single-column.scss                              | **new**
+```
+
+2. **Add your theme to the config.** This is what [the default themes.yml](https://github.com/tootsuite/mastodon/blob/master/config/themes.yml) looks like in Mastodon. To make your custom theme visible in settings, you need to add a new line in the form `themeName: path/to/theme.scss`. For example, the modern-dark theme would require adding `modern-dark: styles/modern-dark.scss` as a new line.
+
+```
+        default: styles/application.scss
+        contrast: styles/contrast.scss
+        mastodon-light: styles/mastodon-light.scss
+        elephant: styles/elephant.scss      | **new**
+```
+
+3. **Add a human-friendly name for the theme (optional).** You can edit each desired language's locale file in `config/locales/[lang].yml` to add a localized string name for your theme's `themeName` as added in the previous step. For example, [the default `config/locales/en.yml`](https://github.com/tootsuite/mastodon/blob/041ff5fa9a45f7b8d1048a05a35611622b6f5fdb/config/locales/en.yml#L942-L945) contains localizations for the three default themes that ship with Mastodon, into the `en`glish language. You need to do this for every language you expect your users to use, or else they will see the unlocalized `themeName` directly.
+
+```
+          themes:
+            contrast: Mastodon (High contrast)
+            default: Mastodon (Dark)
+            mastodon-light: Mastodon (Light)
+            elephant: Elephant              | **new**
+```
+
+4. **Compile theme assets and restart.** Run `RAILS_ENV=production bundle exec rails assets:precompile` and restart your Mastodon instance for the changes to take effect.
+
+![Example of integration](https://github.com/ultramookie/mastodon-bird-ui/assets/38467/1125dc9b-f3a2-431a-860f-d8219d8e0c5c)
 
 ## Installation for regular users, contributing and testing
 
 1. Install [Live CSS Editor](https://github.com/webextensions/live-css-editor) (or any other extension like [Stylus](https://chrome.google.com/webstore/detail/stylus/clngdbkpkpeebahjckkjfobafhncgmne?hl=en) that allows you to inject CSS into web pages) or use [Unite for macOS](https://www.bzgapps.com/unite) or use the [user.js by eg](https://ieji.de/@eg/110174544387143309)
-2. Copy the contents of [style.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/style.css)
-3. Open extension and paste the CSS into the editor
+2. Copy the contents of [layout-single-column.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/layout-single-column.css) and [layout-multiple-columns.css](https://github.com/ronilaukkarinen/mastodon-bird-ui/blob/master/layout-multiple-columns.css)
+3. Open extension and paste the contents of both CSS files into the editor
 4. If you use Live CSS Editor, click 📌-icon so the styles will be remembered for the domain or if you want just to use it as needed, activate styles from the extension's popup
 
 ## Other tweaks and customizations
@@ -164,18 +208,15 @@ See the previous answer. Mastodon Bird UI is not an app, it's a CSS file that yo
 
 If you really would want this to run in a separate URL, you could in theory set up another nginx host for a subdomain and just use [ngx_http_sub_module](http://nginx.org/en/docs/http/ngx_http_sub_module.html) to load up a CSS file. I haven't tried this and it might not be even possible, but it's worth a try.
 
-### Why the advanced web interface is not styled?
+### Is the advanced web interface styled?
 
-It's a choice. I don't use the advanced web interface myself, it's too noisy for me. It would also complicate the CSS file a lot and I'm currently not willing to do that.
-
-It would mean that I would have to go through every single element all over again and make sure the advanced web interface is styled properly. It would also make the CSS file very large and I want to keep the single CSS file as maintainable as possible.
+Yes! From version 1.5.4 multiple columns are supported. Apply layout-multiple-columns.css to your Custom CSS or style extension to enable.
 
 ### Why the admin interface is not styled?
 
-Similar answer than to the question [above](#why-the-advanced-web-interface-is-not-styled). We don't spend much time in the admin interface and it's not a priority for me to style it. It would mean too much work and it's not worth it right now.
+We don't spend much time in the admin interface and it's not a priority for me to style it. It would mean too much work and it's not worth it right now.
 
 ## Goals
 
 - **CSS only.** This means some pseudos and modern CSS hacks. The intent is to have the code base as simple and extendable as possible. The styles should be easily modifiable. Ready-made code works when placed in **Custom CSS** box in {yourinstance.social/admin/settings/appearance}
 - **Dependency free.** No JavaScript, no build process, no nothing. Just plain CSS. Linting is optional and just here to make sure the code quality is good.
-- **Single-column layout only.** This experiment is not meant for advanced layout.

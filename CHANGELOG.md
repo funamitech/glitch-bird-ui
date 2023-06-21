@@ -1,3 +1,34 @@
+### 1.5.7: 2023-06-09
+
+* Fix icon bubble position on single column layout
+* Fix missing px unit
+* Fix typo on selector (thanks @tribela!)
+
+### 1.5.6: 2023-05-14
+
+* Fix toggle track color
+* Add column hashtag list styles
+* Add hashtag context menu background
+* Fix search background color
+* Some fixes for light mode in advanced web interface
+
+### 1.5.5: 2023-05-13
+
+* Fix width when zooming in on the advanced web view
+
+### 1.5.4: 2023-05-13
+
+* Support multiple columns
+* Fix active scrollbar thumb color
+* Move compose panel to the right
+* Hide the elephant from advanced web view
+* General improvements to the advanced web view, like wider width
+* Fix duplicate class before .account__header__bar
+
+### 1.5.3: 2023-05-07
+
+* Fixes #25, User avatars in notifications are sometimes links to my profile instead of theirs (thanks @carlwgeorge!)
+
 ### 1.5.2: 2023-04-28
 
 * Hot fix the bookmark hover icon
